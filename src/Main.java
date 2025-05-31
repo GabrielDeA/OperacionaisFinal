@@ -11,7 +11,13 @@ public class Main {
         Processo processo4 = new Processo("Processo4",4, 4, 3,1, 2);
         Processo processo5 = new Processo("Processo5",5, 5, 4,9, 1);
 
-        List<Processo> processos = List.of(processo1, processo2, processo3, processo4, processo5);
-        FIFO.executarFIFO(processos);
+        List<Processo> processos = new java.util.ArrayList<>();
+        processos.add(processo1);
+        processos.add(processo2);
+        processos.add(processo3);
+        processos.add(processo4);
+        processos.add(processo5);
+       // FIFO.executarFIFO(processos);
+        SJF.executarSJF(processos);
         }
     }

@@ -2,7 +2,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class SJF {
-    public void executarSJF(List<Processo> processos) {
+    public static void executarSJF(List<Processo> processos) {
         int tempoAtual = 0;
         System.out.println("Iniciando execução dos processos em SJF:");
         // Ordena os processos pelo tempo de chegada e depois pelo tempo de execução
