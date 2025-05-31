@@ -31,6 +31,5 @@ public class RoundRobin {
             }
         }
 
-        System.out.println("Todos os processos foram executados em Round Robin.");
-    }
+        System.out.println("Todos os processos foram executados em Round Robin. Tempo total de execução: " + tempoAtual + ".");    }
 }
