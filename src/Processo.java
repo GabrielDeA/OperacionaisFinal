@@ -60,12 +60,12 @@ public class Processo {
         }
     }
 
-    public void atualizaTempoEspera(int tempo) {
-        //switch()
+    public void atualizaTempoEspera() {
+        this.tempoEspera--;
     }
 
     public void atualizaTempoExecucao() {
-        this.tempoEspera = this.tempoEspera--;
+        this.tempoRestante--;
     }
 
 
@@ -144,6 +144,14 @@ public class Processo {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public int getTempoEspera() {
+        return tempoEspera;
+    }
+    
+    public void setTempoEspera(int tempoEspera) {
+        this.tempoEspera = tempoEspera;
     }
     //#endregion getters e setters
 }

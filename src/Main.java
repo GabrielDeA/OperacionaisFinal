@@ -6,7 +6,7 @@ public class Main {
         
         int contadorId = 0;
 
-        Processo processo1 = new Processo("Processo1", contadorId++, 10, 1, TipoEspera.IO, 3);
+        Processo processo1 = new Processo("Processo1", contadorId++, 2, 1, TipoEspera.IO, 3);
         Processo processo2 = new Processo("Processo2", contadorId++, 5, 2, TipoEspera.Nenhum, 0);
         Processo processo3 = new Processo("Processo3", contadorId++, 8, 3, TipoEspera.Memoria, 2);
         Processo processo4 = new Processo("Processo4", contadorId++, 6, 4, TipoEspera.IO, 1);
@@ -18,7 +18,7 @@ public class Main {
         processos.add(processo3);
         processos.add(processo4);
         processos.add(processo5);
-        FIFO.executarFIFO(processos, 100);
+        FIFO.executarFIFO(processos, 1000);
         //SJF.executarSJF(processos);
         //RoundRobin.executarRoundRobin(processos,6);
     }

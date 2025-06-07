@@ -10,7 +10,7 @@ public class RoundRobin {
         int tempoAtual = 0;
 
         Queue<Processo> fila = new LinkedList<>(processos);
-
+        /*
         while (!fila.isEmpty()) {
             Processo processo = fila.poll();
 
@@ -25,12 +25,12 @@ public class RoundRobin {
                     System.out.println(processo.nome + " pausado no tempo " + tempoAtual + " (restando " + processo.tempoParaExecucao + ")");
                     fila.add(processo); // ainda precisa de mais tempo, volta pra fila
                 } else {
-                    processo.executado = true;
+                   processo.executado = true;
                     System.out.println(processo.nome + " finalizado no tempo " + tempoAtual);
                 }
             }
         }
-
+ */
         System.out.println("Todos os processos foram executados em Round Robin. Tempo total de execução: " + tempoAtual + ".");
     }
 }
