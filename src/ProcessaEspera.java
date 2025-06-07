@@ -1,17 +1,17 @@
 public class ProcessaEspera {
+
     public static boolean processaEspera(Processo processo) {
         boolean finalizou = false;
-        if(processo == null) {
+        if (processo == null) {
             return finalizou;
         }
-        if(processo.tipoEspera == TipoEspera.Processo_Filho) {
+        if (processo.getTipoEspera() == TipoEspera.Processo_Filho) {
             //TODO
-        }
-        else {
+        } else {
             processo.atualizaTempoEspera();
         }
 
-        if(processo.tempoEspera<= 0) {
+        if (processo.getTempoEspera() <= 0) {
             processo.setStatus(Status.Pronto);
             processo.setTipoEspera(TipoEspera.Nenhum);
             finalizou = true;
