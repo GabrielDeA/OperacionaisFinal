@@ -12,9 +12,20 @@ public class ProcessaEspera {
         }
 
         if (processo.getTempoEspera() <= 0) {
-            processo.setStatus(Status.Pronto);
-            processo.setTipoEspera(TipoEspera.Nenhum);
-            finalizou = true;
+
+            switch (processo.getTipoEspera()) {
+                case IO:
+                    finalizou = processo.processarIO();
+                    break;
+                case Memoria:
+                    finalizou = processo.processarMemoria();
+                    break;
+                default:
+                    processo.setStatus(Status.Pronto);
+                    processo.setTipoEspera(TipoEspera.Nenhum);
+                    finalizou = true;
+                    break;
+            }
         }
         return finalizou;
     }

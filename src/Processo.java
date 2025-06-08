@@ -32,7 +32,6 @@ public class Processo {
     private int tempoEspera = 0;
     private Status status;
 
-
     public Processo(String nome, int id, int tempoParaExecucao, int quantum, TipoEspera tipo, int tempoEspera) {
         this.nome = nome;
         this.id = id;
@@ -66,6 +65,36 @@ public class Processo {
 
     public void atualizaTempoExecucao() {
         this.tempoRestante--;
+    }
+
+    public boolean processarIO() {
+        System.out.println("[" + nome + "] Iniciando operação de IO...");
+
+        // Simula leitura de dados: criar e percorrer um buffer
+        byte[] buffer = new byte[1024 * 50]; // 50 KB
+        for (int i = 0; i < buffer.length; i++) {
+            buffer[i] = (byte) (i % 256);
+        }
+        this.setStatus(Status.Pronto);
+        this.setTipoEspera(TipoEspera.Nenhum);
+        return true;
+    }
+
+
+    public boolean processarMemoria() {
+        System.out.println("[" + nome + "] Iniciando operação de uso de memória...");
+
+        // Simula uma carga de memória
+        int[] memoria = new int[100_000];
+        long soma = 0;
+        for (int i = 0; i < memoria.length; i++) {
+            memoria[i] = i;
+            soma += memoria[i]; // Simula uso de CPU junto
+        }
+
+        this.setStatus(Status.Pronto);
+        this.setTipoEspera(TipoEspera.Nenhum);
+        return true;
     }
 
 }
