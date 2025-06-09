@@ -18,8 +18,8 @@ public class Main {
         processos.add(processo3);
         processos.add(processo4);
         processos.add(processo5);
-        FIFO.executarFIFO(processos, 1000);
-        //SJF.executarSJF(processos);
+        //FIFO.executarFIFO(processos, 1000);
+        SJF.executarSJF((List<Processo>) processos);
         //RoundRobin.executarRoundRobin(processos,6);
     }
 }
