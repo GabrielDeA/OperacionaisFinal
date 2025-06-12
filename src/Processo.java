@@ -1,6 +1,3 @@
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +6,7 @@ enum TipoEspera {
     IO,
     Processo_Filho,
     Memoria
+
 }
 
 enum Status {
@@ -18,8 +16,6 @@ enum Status {
     Finalizado
 }
 
-@Getter
-@Setter
 public class Processo {
     private String nome;
     private int id;
@@ -31,6 +27,8 @@ public class Processo {
     private TipoEspera tipoEspera;
     private int tempoEspera = 0;
     private Status status;
+
+
 
     public Processo(String nome, int id, int tempoParaExecucao, int quantum, TipoEspera tipo, int tempoEspera) {
         this.nome = nome;
@@ -80,7 +78,6 @@ public class Processo {
         return true;
     }
 
-
     public boolean processarMemoria() {
         System.out.println("[" + nome + "] Iniciando operação de uso de memória...");
 
@@ -95,6 +92,89 @@ public class Processo {
         this.setStatus(Status.Pronto);
         this.setTipoEspera(TipoEspera.Nenhum);
         return true;
+    }
+
+
+    //#region getters e setters
+    
+        public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getPaiId() {
+        return paiId;
+    }
+
+    public void setPaiId(int paiId) {
+        this.paiId = paiId;
+    }
+
+    public List<Processo> getFilhos() {
+        return filhos;
+    }
+
+    public void setFilhos(List<Processo> filhos) {
+        this.filhos = filhos;
+    }
+
+    public int getTempoParaExecucao() {
+        return tempoParaExecucao;
+    }
+
+    public void setTempoParaExecucao(int tempoParaExecucao) {
+        this.tempoParaExecucao = tempoParaExecucao;
+    }
+
+    public int getTempoRestante() {
+        return tempoRestante;
+    }
+
+    public void setTempoRestante(int tempoRestante) {
+        this.tempoRestante = tempoRestante;
+    }
+
+    public int getQuantum() {
+        return quantum;
+    }
+
+    public void setQuantum(int quantum) {
+        this.quantum = quantum;
+    }
+
+    public TipoEspera getTipoEspera() {
+        return tipoEspera;
+    }
+
+    public void setTipoEspera(TipoEspera tipoEspera) {
+        this.tipoEspera = tipoEspera;
+    }
+
+    public int getTempoEspera() {
+        return tempoEspera;
+    }
+
+    public void setTempoEspera(int tempoEspera) {
+        this.tempoEspera = tempoEspera;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
 }

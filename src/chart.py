@@ -68,6 +68,6 @@ def plot_timeline(timeline):
     plt.show()
 
 if __name__ == '__main__':
-    events = parse_log('../process_log.csv')
+    events = parse_log('./process_log.csv')
     timeline = build_timeline(events)
     plot_timeline(timeline)
