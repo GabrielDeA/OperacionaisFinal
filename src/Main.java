@@ -1,9 +1,10 @@
+import java.io.IOException;
 import java.util.List;
 import java.util.Queue;
 
 public class Main {
-    public static void main(String[] args) {
-        
+    public static void main(String[] args) throws IOException {
+        new java.io.FileWriter("process_log.csv", false).close();
         int contadorId = 0;
 
         Processo processo1 = new Processo("Processo1", contadorId++, 2, 1, TipoEspera.IO, 3);
@@ -19,7 +20,7 @@ public class Main {
         processos.add(processo4);
         processos.add(processo5);
         FIFO.executarFIFO(processos, 1000);
-        //SJF.executarSJF(processos);
-        //RoundRobin.executarRoundRobin(processos,6);
+        //SJF.executarSJF((List<Processo>) processos);
+        //RoundRobin.executarRoundRobin((List<Processo>) processos,6);
     }
 }
