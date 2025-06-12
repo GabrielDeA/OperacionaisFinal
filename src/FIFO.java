@@ -12,6 +12,7 @@ public class FIFO {
         while (cicloAtual <= maxCiclos && (!processos.isEmpty() || !esperando.isEmpty() || processoAtual != null)) {
             if (totalProcessos == finalizados.size()) {
                 System.out.println("Todos os processos foram finalizados em FIFO, tempo final: " + cicloAtual);
+                EscalonadorUtils.logProcessEvent("process_log.csv", "todos", 0, " os processos finalizaram");
                 return;
             }
             // escolher o próximo a ser executado
@@ -20,8 +21,8 @@ public class FIFO {
                     case Pronto:
                         processoAtual = processos.poll();
                         processoAtual.setStatus(Status.Executando);
-                        System.out.println("Processo " + processoAtual.getNome() + " começou a ser executado no ciclo "
-                                + cicloAtual);
+                        System.out.println("Processo " + processoAtual.getNome() + " começou a ser executado no ciclo " + cicloAtual);
+                        EscalonadorUtils.logProcessEvent("process_log.csv", processoAtual.getNome(), cicloAtual, "STARTED");
                         break;
                     case Esperando:
                         esperando.add(processos.poll());
@@ -43,6 +44,7 @@ public class FIFO {
                     esperando.add(processoAtual);
                     System.out.println("Processo " + processoAtual.getNome() + " está esperando sua operação de "
                             + processoAtual.getTipoEspera() + " no ciclo " + cicloAtual);
+                    EscalonadorUtils.logProcessEvent("process_log.csv", processoAtual.getNome(), cicloAtual, "WAITING_" + processoAtual.getTipoEspera());
                     processoAtual = null;
                     cicloAtual++;
                     continue;
@@ -51,18 +53,21 @@ public class FIFO {
                     processoAtual.setStatus(Status.Finalizado);
                     finalizados.add(processoAtual);
                     System.out.println("Processo " + processoAtual.getNome() + " finalizou sua execução no ciclo " + cicloAtual);
+                    EscalonadorUtils.logProcessEvent("process_log.csv", processoAtual.getNome(), cicloAtual, "FINISHED");
                     processoAtual = null;
                 }
             }
 
             if (ProcessaEspera.processaEspera(esperando.peek())) {
                 System.out.println("Processo " + esperando.peek().getNome() + " finalizou sua espera no ciclo " + cicloAtual);
+                EscalonadorUtils.logProcessEvent("process_log.csv", esperando.peek().getNome(), cicloAtual, "WAIT_FINISHED");
                 processos.add(esperando.poll());
             }
 
             cicloAtual++;
         }
         System.out.println("Todos os processos foram executados em FIFO, tempo final: " + cicloAtual);
+        EscalonadorUtils.logProcessEvent("process_log.csv", "todos", cicloAtual, "ALL_FINISHED");
     }
 
     // int tempoFinal = EscalonadorUtils.executarProcessos(processos);
