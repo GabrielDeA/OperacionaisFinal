@@ -1,6 +1,4 @@
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class RoundRobin {
 
@@ -8,29 +6,68 @@ public class RoundRobin {
         System.out.println("Iniciando execução dos processos em Round Robin (quantum = " + quantum + "):");
 
         int tempoAtual = 0;
-
         Queue<Processo> fila = new LinkedList<>(processos);
-        /*
-        while (!fila.isEmpty()) {
-            Processo processo = fila.poll();
+        List<Processo> esperando = new ArrayList<>();
+        List<Processo> finalizados = new ArrayList<>();
 
-            if (processo.tempoParaExecucao > 0) {
-                System.out.println(processo.nome + " iniciado no tempo " + tempoAtual);
+        while (finalizados.size() < processos.size()) {
 
-                int tempoExecutado = Math.min(quantum, processo.tempoParaExecucao);
-                tempoAtual += tempoExecutado;
-                processo.tempoParaExecucao -= tempoExecutado;
-
-                if (processo.tempoParaExecucao > 0) {
-                    System.out.println(processo.nome + " pausado no tempo " + tempoAtual + " (restando " + processo.tempoParaExecucao + ")");
-                    fila.add(processo); // ainda precisa de mais tempo, volta pra fila
-                } else {
-                   processo.executado = true;
-                    System.out.println(processo.nome + " finalizado no tempo " + tempoAtual);
+            // Processar esperas
+            Iterator<Processo> itEspera = esperando.iterator();
+            while (itEspera.hasNext()) {
+                Processo p = itEspera.next();
+                if (ProcessaEspera.processaEspera(p)) {
+                    p.setStatus(Status.Pronto);
+                    fila.add(p);
+                    itEspera.remove();
                 }
             }
+
+            Processo atual = fila.poll();
+            if (atual == null) {
+                tempoAtual++; // avança tempo enquanto espera processo sair do bloqueio
+                continue;
+            }
+
+            if (atual.getStatus() == Status.Pronto) {
+                atual.setStatus(Status.Executando);
+                System.out.println("[" + tempoAtual + "] Executando " + atual.getNome());
+
+                int tempoExecutado = 0;
+                boolean entrouEmEspera = false;
+
+                while (tempoExecutado < quantum && atual.getTempoRestante() > 0) {
+                    if (atual.getTipoEspera() != TipoEspera.Nenhum) {
+                        atual.setStatus(Status.Esperando);
+                        esperando.add(atual);
+                        entrouEmEspera = true;
+                        break;
+                    }
+
+                    atual.atualizaTempoExecucao();
+                    tempoExecutado++;
+                    tempoAtual++;
+                }
+
+                if (!entrouEmEspera) {
+                    if (atual.getTempoRestante() <= 0) {
+                        atual.setStatus(Status.Finalizado);
+                        finalizados.add(atual);
+                        System.out.println("[" + tempoAtual + "] Processo " + atual.getNome() + " finalizado.");
+                    } else {
+                        atual.setStatus(Status.Pronto);
+                        fila.add(atual); // ainda tem execução, volta pra fila
+                        System.out.println("[" + tempoAtual + "] Processo " + atual.getNome() + " pausado (resta " + atual.getTempoRestante() + ")");
+                    }
+                }
+
+            } else {
+                // Processo inesperadamente em estado errado, talvez acabou de sair da espera
+                fila.add(atual);
+                tempoAtual++;
+            }
         }
- */
+
         System.out.println("Todos os processos foram executados em Round Robin. Tempo total de execução: " + tempoAtual + ".");
     }
 }
