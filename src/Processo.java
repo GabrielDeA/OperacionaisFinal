@@ -27,6 +27,9 @@ public class Processo {
     private TipoEspera tipoEspera;
     private int tempoEspera = 0;
     private Status status;
+    private int fila;
+
+
 
 
 
@@ -63,6 +66,10 @@ public class Processo {
 
     public void atualizaTempoExecucao() {
         this.tempoRestante--;
+    }
+
+    public void atualizaQuantum() {
+        this.quantum--;
     }
 
     public boolean processarIO() {
@@ -175,6 +182,14 @@ public class Processo {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+       public int getFila() {
+        return fila;
+    }
+
+    public void setFila(int filaOrigem) {
+        this.fila = filaOrigem;
     }
 
 }

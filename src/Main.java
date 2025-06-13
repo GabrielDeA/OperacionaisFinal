@@ -19,8 +19,9 @@ public class Main {
         processos.add(processo3);
         processos.add(processo4);
         processos.add(processo5);
-        FIFO.executarFIFO(processos, 1000);
+        //FIFO.executarFIFO(processos, 1000);
         //SJF.executarSJF((List<Processo>) processos);
         //RoundRobin.executarRoundRobin((List<Processo>) processos,6);
+        FilasRealimentacao.executarFilasRealimentacao(processos, 1000);
     }
 }
