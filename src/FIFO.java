@@ -69,8 +69,4 @@ public class FIFO {
         System.out.println("Todos os processos foram executados em FIFO, tempo final: " + cicloAtual);
         EscalonadorUtils.logProcessEvent("process_log.csv", "todos", cicloAtual, "ALL_FINISHED");
     }
-
-    // int tempoFinal = EscalonadorUtils.executarProcessos(processos);
-    // System.out.println("Todos os processos foram executados em FIFO, tempo final:
-    // " + tempoFinal);
 }

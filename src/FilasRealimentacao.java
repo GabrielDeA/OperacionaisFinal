@@ -12,6 +12,7 @@ public class FilasRealimentacao {
 
         Fila(int id, int quantum) {
             this.quantum = quantum;
+            this.id = id;
         }
 
         private int getQuantum() {
@@ -21,7 +22,8 @@ public class FilasRealimentacao {
 
     public static void executarFilasRealimentacao(Queue<Processo> processos, int maxCiclos) {
         Random random = new Random();
-        int contadorId = -1;
+        int qtdProcessos = processos.size();
+        int contadorId = 0;
         Fila fila0 = new Fila(contadorId++, random.nextInt(10));
         Fila fila1 = new Fila(contadorId++, random.nextInt(fila0.getQuantum(), fila0.getQuantum() + 10));
         Fila fila2 = new Fila(contadorId++, random.nextInt(fila1.getQuantum(), fila1.getQuantum() + 10));
@@ -35,7 +37,6 @@ public class FilasRealimentacao {
 
         // Processos iniciam na fila de maior prioridade
         fila0.processos = processos;
-
 
         class MetodosPrivados {
             private void promover(Processo processo) {
@@ -60,8 +61,10 @@ public class FilasRealimentacao {
 
         }
         MetodosPrivados metodos = new MetodosPrivados();
-        //#region Inicio da execução
-        while (true) {
+        System.out.println("Início da execução por filas com realimentação, com " + filas.length + " filas");
+
+        // #region Inicio da execução
+        while (finalizados.size() < qtdProcessos) {
             // Escolhe proximo processo a ser executado
             if (atual == null) {
                 if (!fila0.processos.isEmpty()) {
@@ -76,47 +79,89 @@ public class FilasRealimentacao {
                     atual = fila2.processos.poll();
                     atual.setQuantum(fila2.getQuantum());
                     atual.setFila(fila2.id);
+                } else if (!esperando.isEmpty() && ProcessaEspera.processaEspera(esperando.peek())) {
+                    {
+                        Processo p = esperando.peek();
+                        for (Fila fila : filas) {
+                            if (fila.id == p.getFila()) {
+                                System.out.println(
+                                        "Processo " + p.getNome() + " finalizou sua espera no ciclo " + cicloAtual);
+                                fila.processos.add(esperando.poll());
+                                break;
+                            }
+                        }
+                        cicloAtual++;
+                        continue;
+                    }
+                } else{
+                  //  System.out.println("Todos processos executados no cilo " + cicloAtual);
+                    cicloAtual++;
+                    //continue;
+                    break;
                 }
+                System.out.println("Começa a execução de " + atual.getNome() + " a partir da fila " + atual.getFila()
+                        + " no ciclo " + cicloAtual);
+                EscalonadorUtils.logProcessEvent("process_log.csv", atual.getNome(), cicloAtual, "STARTED");
+
                 cicloAtual++;
                 continue;
             }
 
-            if(ProcessaEspera.processaEspera(esperando.peek())){
+            if (!esperando.isEmpty() && ProcessaEspera.processaEspera(esperando.peek())) {
+                Processo p = esperando.peek();
                 for (Fila fila : filas) {
-                    if(fila.id == esperando.peek().getFila()) {
+                    if (fila.id == p.getFila()) {
+                        System.out.println("Processo " + p.getNome() + " finalizou sua espera no ciclo " + cicloAtual);
+                        EscalonadorUtils.logProcessEvent("process_log.csv", esperando.peek().getNome(), cicloAtual, "WAIT_FINISHED");
+
                         fila.processos.add(esperando.poll());
+                        break;
                     }
                 }
                 cicloAtual++;
                 continue;
             }
 
-            if(atual.getQuantum() <= 0) {
+            if (atual.getQuantum() <= 0) {
                 metodos.rebaixar(atual);
+                System.out.println("Processo " + atual.getNome() + " esgotou o quantum e foi rebaixado para a fila "
+                        + atual.getFila() + ", no ciclo " + cicloAtual);
                 atual = null;
                 cicloAtual++;
                 continue;
             }
 
-            if(atual.getTempoRestante() <= 0) {
+            if (atual.getTempoRestante() <= 0) {
                 finalizados.add(atual);
+                System.out.println("Processo " + atual.getNome() + " concluiu sua execução");
+                EscalonadorUtils.logProcessEvent("process_log.csv", atual.getNome(), cicloAtual, "FINISHED");
+
                 atual = null;
+                cicloAtual++;
+                continue;
             }
 
             if (atual.getTipoEspera() == TipoEspera.Nenhum) {
-                atual.atualizaTempoEspera();
+                atual.atualizaTempoExecucao();
                 atual.atualizaQuantum();
                 cicloAtual++;
                 continue;
             } else {
                 esperando.add(atual);
                 metodos.promover(atual);
+                System.out.println(
+                        "Processo " + atual.getNome() + " está esperando sua operação de " + atual.getTipoEspera() +
+                                " e foi promovio para a fila " + atual.getFila() + " no cilco " + cicloAtual);
+                EscalonadorUtils.logProcessEvent("process_log.csv", atual.getNome(), cicloAtual, "WAITING_" + atual.getTipoEspera());
+
                 atual = null;
                 cicloAtual++;
                 continue;
             }
 
         }
+        System.out.println("Todos processos executados no cilo " + cicloAtual);
+        EscalonadorUtils.logProcessEvent("process_log.csv", "todos", cicloAtual, "ALL_FINISHED");
 
     }
 }
