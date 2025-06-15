@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RoundRobin {
 
@@ -70,4 +72,79 @@ public class RoundRobin {
 
         System.out.println("Todos os processos foram executados em Round Robin. Tempo total de execução: " + tempoAtual + ".");
     }
+
+    public static void executarRoundRobinComCores(List<Processo> processos, int quantum, int numCores) {
+        System.out.println("Iniciando Round Robin com " + numCores + " cores e quantum " + quantum);
+
+        Queue<Processo> fila = new ConcurrentLinkedQueue<>(processos);
+        ExecutorService pool = Executors.newFixedThreadPool(numCores);
+        CountDownLatch latch = new CountDownLatch(numCores);
+        AtomicInteger cicloAtual = new AtomicInteger(1);
+
+        CyclicBarrier barrier = new CyclicBarrier(numCores, () -> {
+            synchronized (System.out) {
+                System.out.println("Cycle " + cicloAtual.getAndIncrement() + " ended. [All cores finished their turn]");
+            }
+        });
+
+        for (int coreId = 0; coreId < numCores; coreId++) {
+            int finalCoreId = coreId;
+            pool.execute(() -> {
+                while (true) {
+                    Processo processo = fila.poll();
+                    if (processo == null) {
+                        try {
+                            barrier.await();
+                        } catch (InterruptedException | BrokenBarrierException e) {
+                            break;
+                        }
+                        if (fila.isEmpty()) break;
+                        else continue;
+                    }
+
+                    synchronized (processo) {
+                        if (processo.getStatus() == Status.Finalizado) continue;
+
+                        processo.setStatus(Status.Executando);
+                        System.out.println("[Core " + finalCoreId + "] Executando " + processo.getNome());
+
+                        int tempoExecutado = Math.min(quantum, processo.getTempoRestante());
+                        for (int i = 0; i < tempoExecutado; i++) {
+                            processo.atualizaTempoExecucao();
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            }
+                        }
+
+                        if (processo.getTempoRestante() <= 0) {
+                            processo.setStatus(Status.Finalizado);
+                            System.out.println("[Core " + finalCoreId + "] Processo " + processo.getNome() + " finalizado.");
+                        } else {
+                            processo.setStatus(Status.Pronto);
+                            fila.add(processo);
+                        }
+                    }
+
+                    try {
+                        barrier.await();
+                    } catch (InterruptedException | BrokenBarrierException e) {
+                        break;
+                    }
+                }
+                latch.countDown();
+            });
+        }
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        pool.shutdown();
+        System.out.println("Round Robin finalizado.");
+    }
+
 }

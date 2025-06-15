@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
@@ -22,6 +23,8 @@ public class Main {
         //FIFO.executarFIFO(processos, 1000);
         //SJF.executarSJF((List<Processo>) processos);
         //RoundRobin.executarRoundRobin((List<Processo>) processos,6);
-        FilasRealimentacao.executarFilasRealimentacao(processos, 1000);
+        //FilasRealimentacao.executarFilasRealimentacao(processos, 1000);
+        RoundRobin.executarRoundRobinComCores(new ArrayList<>(processos), 3,2);
+        //FIFO.executarFIFOComCores(new ArrayList<>(processos), 2);
     }
 }
