@@ -72,6 +72,7 @@ public class FIFO {
         System.out.println("Todos os processos foram executados em FIFO, tempo final: " + cicloAtual);
         EscalonadorUtils.logProcessEvent("process_log.csv", "todos", cicloAtual, "ALL_FINISHED");
     }
+
     public static void executarFIFOComCores(List<Processo> processos, int numCores) {
         System.out.println("Iniciando FIFO com " + numCores + " cores");
 
@@ -94,40 +95,41 @@ public class FIFO {
             pool.execute(() -> {
                 Processo processoAtual = null;
                 while (true) {
-                    // Exit condition: all processes finished
-                    if (finalizados.size() >= totalProcessos) break;
+                    // Exit condition: all processes finished and nothing left to do
+                    if (finalizados.size() >= totalProcessos &&
+                            fila.isEmpty() && esperando.isEmpty() && processoAtual == null) break;
 
-                    // Process waiting queue (all threads can help)
-                    Processo esperandoPeek = esperando.peek();
-                    while (esperandoPeek != null && ProcessaEspera.processaEspera(esperandoPeek)) {
-                        System.out.println("[Core " + finalCoreId + "] Processo " + esperandoPeek.getNome() + " finalizou sua espera no ciclo " + cicloAtual.get());
-                        EscalonadorUtils.logProcessEvent("process_log.csv", esperandoPeek.getNome(), cicloAtual.get(), "WAIT_FINISHED");
-                        Processo proc = esperando.poll();
-                        if (proc != null) {
-                            fila.add(proc);
+                    // Process all waiting processes
+                    synchronized (esperando) {
+                        for (Processo p : esperando.toArray(new Processo[0])) {
+                            if (ProcessaEspera.processaEsperaThread(p, cicloAtual.get(), "[Core " + finalCoreId + "]")) {
+                                esperando.remove(p);
+                                System.out.println("[Core " + finalCoreId + "] Processo " + p.getNome() + " finalizou sua espera no ciclo " + cicloAtual.get());
+                                EscalonadorUtils.logProcessEvent("process_log.csv", p.getNome(), cicloAtual.get(), "WAIT_FINISHED");
+                                fila.add(p);
+                            }
                         }
-                        esperandoPeek = esperando.peek();
                     }
 
                     // Try to get a new process if not currently executing one
                     if (processoAtual == null) {
-                        Processo peek = fila.peek();
-                        if (peek != null) {
-                            switch (peek.getStatus()) {
+                        Processo proc = fila.poll();
+                        if (proc != null) {
+                            switch (proc.getStatus()) {
                                 case Pronto:
-                                    processoAtual = fila.poll();
+                                    processoAtual = proc;
                                     processoAtual.setStatus(Status.Executando);
                                     System.out.println("[Core " + finalCoreId + "] Processo " + processoAtual.getNome() + " começou a ser executado no ciclo " + cicloAtual.get());
                                     EscalonadorUtils.logProcessEvent("process_log.csv", processoAtual.getNome(), cicloAtual.get(), "STARTED");
                                     break;
                                 case Esperando:
-                                    esperando.add(fila.poll());
+                                    esperando.add(proc);
                                     break;
                                 case Finalizado:
-                                    finalizados.add(fila.poll());
+                                    finalizados.add(proc);
                                     break;
                                 default:
-                                    fila.poll();
+                                    // Ignore or handle as needed
                                     break;
                             }
                         }

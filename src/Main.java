@@ -24,7 +24,7 @@ public class Main {
         //SJF.executarSJF((List<Processo>) processos);
         //RoundRobin.executarRoundRobin((List<Processo>) processos,6);
         //FilasRealimentacao.executarFilasRealimentacao(processos, 1000);
-        RoundRobin.executarRoundRobinComCores(new ArrayList<>(processos), 3,2);
-        //FIFO.executarFIFOComCores(new ArrayList<>(processos), 2);
+        //RoundRobin.executarRoundRobinComCores(new ArrayList<>(processos), 3,2);
+        FIFO.executarFIFOComCores(new ArrayList<>(processos), 1);
     }
 }
