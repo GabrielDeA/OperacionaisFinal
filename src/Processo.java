@@ -17,6 +17,7 @@ enum Status {
 }
 
 public class Processo {
+
     private String nome;
     private int id;
     private int paiId = -1; // -1 indica que o processo não tem pai
@@ -28,10 +29,15 @@ public class Processo {
     private int tempoEspera = 0;
     private Status status;
     private int fila;
+    private boolean isDaemon;
 
+    public boolean isDaemon() {
+        return isDaemon;
+    }
 
-
-
+    public void setDaemon(boolean daemon) {
+        isDaemon = daemon;
+    }
 
     public Processo(String nome, int id, int tempoParaExecucao, int quantum, TipoEspera tipo, int tempoEspera) {
         this.nome = nome;
@@ -42,6 +48,19 @@ public class Processo {
         this.tipoEspera = tipo;
         this.tempoEspera = tempoEspera;
         this.status = Status.Pronto;
+        this.isDaemon = false;
+    }
+
+    public Processo(String nome, int id, int tempoParaExecucao, int quantum, TipoEspera tipo, int tempoEspera, boolean isDaemon) {
+        this.nome = nome;
+        this.id = id;
+        this.tempoParaExecucao = tempoParaExecucao;
+        this.tempoRestante = tempoParaExecucao;
+        this.quantum = quantum;
+        this.tipoEspera = tipo;
+        this.tempoEspera = tempoEspera;
+        this.status = Status.Pronto;
+        this.isDaemon = isDaemon;
     }
 
     public void addFilho(Processo filho) {
@@ -103,8 +122,8 @@ public class Processo {
 
 
     //#region getters e setters
-    
-        public String getNome() {
+
+    public String getNome() {
         return nome;
     }
 
@@ -184,7 +203,7 @@ public class Processo {
         this.status = status;
     }
 
-       public int getFila() {
+    public int getFila() {
         return fila;
     }
 

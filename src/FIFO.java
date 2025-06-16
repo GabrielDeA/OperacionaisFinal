@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class FIFO {
     public static void executarFIFO(Queue<Processo> processos, int maxCiclos) {
@@ -83,6 +84,33 @@ public class FIFO {
         CountDownLatch latch = new CountDownLatch(numCores);
         AtomicInteger cicloAtual = new AtomicInteger(0);
         int totalProcessos = processos.size();
+        List<Processo> daemonProcesses = processos.stream()
+                .filter(Processo::isDaemon)
+                .toList();
+
+        if (!daemonProcesses.isEmpty()) {
+            for (Processo daemon : daemonProcesses) {
+                processos.remove(daemon);
+                fila.remove(daemon);
+                numCores--;
+
+                Thread daemonThread = new Thread(() -> {
+                    int ciclo = 0;
+                    while (true) {
+                        System.out.println("[Daemon Core] Processo " + daemon.getNome() + " está rodando como daemon no ciclo " + ciclo);
+                        EscalonadorUtils.logProcessEvent("process_log.csv", daemon.getNome(), ciclo, "DAEMON_RUNNING");
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                        ciclo++;
+                    }
+                });
+                daemonThread.setDaemon(true);
+                daemonThread.start();
+            }
+        }
 
         CyclicBarrier barrier = new CyclicBarrier(numCores, () -> {
             synchronized (System.out) {
@@ -129,13 +157,11 @@ public class FIFO {
                                     finalizados.add(proc);
                                     break;
                                 default:
-                                    // Ignore or handle as needed
                                     break;
                             }
                         }
                     }
 
-                    // Execute or move to waiting
                     if (processoAtual != null) {
                         if (processoAtual.getTipoEspera() == TipoEspera.Nenhum) {
                             processoAtual.atualizaTempoExecucao();

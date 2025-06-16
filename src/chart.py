@@ -8,7 +8,9 @@ EVENT_COLORS = {
     'WAITING_Processo_Filho': 'tab:gray',
     'WAIT_FINISHED': 'tab:blue',
     'FINISHED': 'tab:red',
-    'ALL_FINISHED': 'black'
+    'ALL_FINISHED': 'black',
+    'DAEMON_RUNNING': 'tab:brown'
+
 }
 
 def parse_log(log_path):

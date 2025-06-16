@@ -13,6 +13,8 @@ public class Main {
         Processo processo3 = new Processo("P3", contadorId++, 8, 3, TipoEspera.Memoria, 2);
         Processo processo4 = new Processo("P4", contadorId++, 6, 4, TipoEspera.IO, 1);
         Processo processo5 = new Processo("P5", contadorId++, 12, 5, TipoEspera.Memoria, 4);
+        Processo processo6 = new Processo("P6", contadorId++, 12, 5, TipoEspera.Memoria, 4,true);
+
 
         Queue<Processo> processos = new java.util.LinkedList<>();
         processos.add(processo1);
@@ -20,11 +22,12 @@ public class Main {
         processos.add(processo3);
         processos.add(processo4);
         processos.add(processo5);
+        processos.add(processo6);
         //FIFO.executarFIFO(processos, 1000);
         //SJF.executarSJF((List<Processo>) processos);
         //RoundRobin.executarRoundRobin((List<Processo>) processos,6);
         //FilasRealimentacao.executarFilasRealimentacao(processos, 1000);
         //RoundRobin.executarRoundRobinComCores(new ArrayList<>(processos), 3,2);
-        FIFO.executarFIFOComCores(new ArrayList<>(processos), 1);
+        FIFO.executarFIFOComCores(new ArrayList<>(processos), 8);
     }
 }
