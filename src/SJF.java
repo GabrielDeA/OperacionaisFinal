@@ -2,7 +2,7 @@ import java.util.*;
 
 public class SJF {
     public static void executarSJF(List<Processo> processos) {
-        System.out.println("Iniciando execução dos processos em SJF:");
+        System.out.println("Iniciando execucao dos processos em SJF:");
         int cicloAtual = 0;
         List<Processo> esperando = new ArrayList<>();
         List<Processo> finalizados = new ArrayList<>();
@@ -38,7 +38,7 @@ public class SJF {
 
             if (next != null) {
                 next.setStatus(Status.Executando);
-                System.out.println("Processo " + next.getNome() + " começou a ser executado no ciclo " + cicloAtual);
+                System.out.println("Processo " + next.getNome() + " comecou a ser executado no ciclo " + cicloAtual);
                 if (next.getTipoEspera() == TipoEspera.Nenhum) {
                     next.atualizaTempoExecucao();
                 } else {
@@ -52,7 +52,7 @@ public class SJF {
                     next.setStatus(Status.Finalizado);
                     finalizados.add(next);
                     processos.remove(next);
-                    System.out.println("Processo " + next.getNome() + " finalizou sua execução no ciclo " + cicloAtual);
+                    System.out.println("Processo " + next.getNome() + " finalizou sua execucao no ciclo " + cicloAtual);
                 } else {
                     next.setStatus(Status.Pronto);
                 }

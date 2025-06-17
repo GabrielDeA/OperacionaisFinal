@@ -61,9 +61,9 @@ public class FilasRealimentacao {
 
         }
         MetodosPrivados metodos = new MetodosPrivados();
-        System.out.println("Início da execução por filas com realimentação, com " + filas.length + " filas");
+        System.out.println("Início da execucao por filas com realimentacao, com " + filas.length + " filas");
 
-        // #region Inicio da execução
+        // #region Inicio da execucao
         while (finalizados.size() < qtdProcessos) {
             // Escolhe proximo processo a ser executado
             if (atual == null) {
@@ -99,7 +99,7 @@ public class FilasRealimentacao {
                     //continue;
                     break;
                 }
-                System.out.println("Começa a execução de " + atual.getNome() + " a partir da fila " + atual.getFila()
+                System.out.println("Comeca a execucao de " + atual.getNome() + " a partir da fila " + atual.getFila()
                         + " no ciclo " + cicloAtual);
                 EscalonadorUtils.logProcessEvent("process_log.csv", atual.getNome(), cicloAtual, "STARTED");
 
@@ -133,7 +133,7 @@ public class FilasRealimentacao {
 
             if (atual.getTempoRestante() <= 0) {
                 finalizados.add(atual);
-                System.out.println("Processo " + atual.getNome() + " concluiu sua execução");
+                System.out.println("Processo " + atual.getNome() + " concluiu sua execucao");
                 EscalonadorUtils.logProcessEvent("process_log.csv", atual.getNome(), cicloAtual, "FINISHED");
 
                 atual = null;
@@ -150,7 +150,7 @@ public class FilasRealimentacao {
                 esperando.add(atual);
                 metodos.promover(atual);
                 System.out.println(
-                        "Processo " + atual.getNome() + " está esperando sua operação de " + atual.getTipoEspera() +
+                        "Processo " + atual.getNome() + " está esperando sua operacao de " + atual.getTipoEspera() +
                                 " e foi promovio para a fila " + atual.getFila() + " no cilco " + cicloAtual);
                 EscalonadorUtils.logProcessEvent("process_log.csv", atual.getNome(), cicloAtual, "WAITING_" + atual.getTipoEspera());
 

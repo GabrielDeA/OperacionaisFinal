@@ -20,7 +20,7 @@ public class Processo {
 
     private String nome;
     private int id;
-    private int paiId = -1; // -1 indica que o processo não tem pai
+    private int paiId = -1; // -1 indica que o processo nao tem pai
     private List<Processo> filhos = new ArrayList<>();
     private int tempoParaExecucao;
     private int tempoRestante;
@@ -92,7 +92,7 @@ public class Processo {
     }
 
     public boolean processarIO() {
-        System.out.println("[" + nome + "] Iniciando operação de IO...");
+        System.out.println("[" + nome + "] Iniciando operacao de IO...");
 
         // Simula leitura de dados: criar e percorrer um buffer
         byte[] buffer = new byte[1024 * 50]; // 50 KB
@@ -105,7 +105,7 @@ public class Processo {
     }
 
     public boolean processarMemoria() {
-        System.out.println("[" + nome + "] Iniciando operação de uso de memória...");
+        System.out.println("[" + nome + "] Iniciando operacao de uso de memória...");
 
         // Simula uma carga de memória
         int[] memoria = new int[100_000];

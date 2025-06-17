@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RoundRobin {
 
     public static void executarRoundRobin(List<Processo> processos, int quantum) {
-        System.out.println("Iniciando execução dos processos em Round Robin (quantum = " + quantum + "):");
+        System.out.println("Iniciando execucao dos processos em Round Robin (quantum = " + quantum + "):");
 
         int tempoAtual = 0;
         Queue<Processo> fila = new LinkedList<>(processos);
@@ -27,7 +27,7 @@ public class RoundRobin {
 
             Processo atual = fila.poll();
             if (atual == null) {
-                tempoAtual++; // avança tempo enquanto espera processo sair do bloqueio
+                tempoAtual++; // avanca tempo enquanto espera processo sair do bloqueio
                 continue;
             }
 
@@ -58,7 +58,7 @@ public class RoundRobin {
                         System.out.println("[" + tempoAtual + "] Processo " + atual.getNome() + " finalizado.");
                     } else {
                         atual.setStatus(Status.Pronto);
-                        fila.add(atual); // ainda tem execução, volta pra fila
+                        fila.add(atual); // ainda tem execucao, volta pra fila
                         System.out.println("[" + tempoAtual + "] Processo " + atual.getNome() + " pausado (resta " + atual.getTempoRestante() + ")");
                     }
                 }
@@ -70,7 +70,7 @@ public class RoundRobin {
             }
         }
 
-        System.out.println("Todos os processos foram executados em Round Robin. Tempo total de execução: " + tempoAtual + ".");
+        System.out.println("Todos os processos foram executados em Round Robin. Tempo total de execucao: " + tempoAtual + ".");
     }
 
     public static void executarRoundRobinComCores(List<Processo> processos, int quantum, int numCores) {
