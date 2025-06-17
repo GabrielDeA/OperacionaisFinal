@@ -106,11 +106,11 @@ public class FIFO {
                         }
                         System.out.println("[Daemon Core] Processo " + daemon.getNome() + " está rodando como daemon no ciclo " + ciclo);
                         EscalonadorUtils.logProcessEvent("process_log.csv", daemon.getNome(), ciclo, "DAEMON_RUNNING");
-                        try {
-                            sleep(5000);
-                        } catch (InterruptedException e) {
-                            break;
-                        }
+                        //try {
+                        //q    sleep(5000);
+                        //} catch (InterruptedException e) {
+                         //   break;
+                        //}
                         ciclo++;
                     }
                 });
@@ -126,11 +126,11 @@ public class FIFO {
                         }
 
                         System.out.println("Cycle " + cicloAtual.incrementAndGet() + " ended. [All cores finished their turn]");
-                        try {
-                            sleep(10000); // Simula o tempo de espera para o próximo ciclo
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+                        //try {
+                        //    sleep(10000); // Simula o tempo de espera para o próximo ciclo
+                        //} catch (InterruptedException e) {
+                        //    throw new RuntimeException(e);
+                        //}
                     }
                 });
 
@@ -153,7 +153,6 @@ public class FIFO {
                                 }
                             }
 
-                            // Try to get a new process if not currently executing one
                             if (processoAtual == null) {
                                 Processo proc = fila.poll();
                                 if (proc != null) {

@@ -29,7 +29,7 @@ public class Main {
             System.setOut(printStream);
             System.setErr(printStream);
 
-            String[] options = {"FIFO", "SJF", "Round Robin", "Filas Realimentacao", "FIFO com Cores"};
+            String[] options = {"FIFO", "SJF", "Round Robin", "Filas Realimentacao", "FIFO com 1 thread", "FIFO com 3 threads", "FIFO com 4 threads", "FIFO com 5 threads"};
             JComboBox<String> comboBox = new JComboBox<>(options);
             JButton runButton = new JButton("Run");
             JButton stopButton = new JButton("Stop");
@@ -73,8 +73,10 @@ public class Main {
                             case 1 -> SJF.executarSJF(new ArrayList<>(processos));
                             case 2 -> RoundRobin.executarRoundRobin(new ArrayList<>(processos), 6);
                             case 3 -> FilasRealimentacao.executarFilasRealimentacao(new LinkedList<>(processos), 1000);
-                            case 4 -> FIFO.executarFIFOComCores(new ArrayList<>(processos), 3, () -> shouldStop);
-                            default -> System.out.println("No algorithm selected.");
+                            case 4 -> FIFO.executarFIFOComCores(new ArrayList<>(processos), 1, () -> shouldStop);
+                            case 5 -> FIFO.executarFIFOComCores(new ArrayList<>(processos), 3, () -> shouldStop);
+                            case 6 -> FIFO.executarFIFOComCores(new ArrayList<>(processos), 4, () -> shouldStop);
+                            case 7 -> FIFO.executarFIFOComCores(new ArrayList<>(processos), 5, () -> shouldStop);
                         }
                     } catch (Exception ex) {
                         ex.printStackTrace();
