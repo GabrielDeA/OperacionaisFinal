@@ -29,7 +29,7 @@ public class Main {
             System.setOut(printStream);
             System.setErr(printStream);
 
-            String[] options = {"FIFO", "SJF", "Round Robin", "Filas Realimentacao", "FIFO com 1 thread", "FIFO com 3 threads", "FIFO com 4 threads", "FIFO com 5 threads", "round robin com 3 cores"};
+            String[] options = {"FIFO", "SJF", "Round Robin", "Filas Realimentacao", "FIFO com 1 thread", "FIFO com 3 threads", "FIFO com 4 threads", "FIFO com 5 threads", "RoundRobin 3 cores 5 quantum", "RoundRobin 5 cores 3 quantum"};
             JComboBox<String> comboBox = new JComboBox<>(options);
             JButton runButton = new JButton("Run");
             JButton stopButton = new JButton("Stop");
@@ -78,6 +78,7 @@ public class Main {
                             case 6 -> FIFO.executarFIFOComCores(new ArrayList<>(processos), 4, () -> shouldStop);
                             case 7 -> FIFO.executarFIFOComCores(new ArrayList<>(processos), 5, () -> shouldStop);
                             case 8 -> RoundRobin.executarRoundRobinComCores(new ArrayList<>(processos), 5, 3);
+                            case 9 -> RoundRobin.executarRoundRobinComCores(new ArrayList<>(processos), 3, 5);
                         }
                     } catch (Exception ex) {
                         ex.printStackTrace();

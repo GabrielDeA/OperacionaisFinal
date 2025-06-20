@@ -9,7 +9,8 @@ EVENT_COLORS = {
     'WAIT_FINISHED': 'tab:blue',
     'FINISHED': 'tab:red',
     'ALL_FINISHED': 'black',
-    'DAEMON_RUNNING': 'tab:brown'
+    'DAEMON_RUNNING': 'tab:brown',
+    'PAUSED': 'tab:cyan',
 
 }
 
@@ -22,7 +23,13 @@ def parse_log(log_path):
                 continue
             proc, time, event = line.split(',')
             time = int(time)
+            # Ensure unique cycle per event for each process
+            if proc in timeline and timeline[proc]:
+                last_time, _ = timeline[proc][-1]
+                if time == last_time:
+                    time += 1
             timeline.setdefault(proc, []).append((time, event))
+
     return timeline
 def plot_timeline(timeline):
     import matplotlib.pyplot as plt
@@ -61,5 +68,5 @@ def plot_timeline(timeline):
     plt.show()
 
 if __name__ == '__main__':
-    timeline = parse_log('../process_log.csv')
+    timeline = parse_log(r'D:\8086\OperacionaisFinal\process_log.csv')
     plot_timeline(timeline)

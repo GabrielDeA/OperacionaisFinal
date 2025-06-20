@@ -14,7 +14,6 @@ public class RoundRobin {
 
         while (finalizados.size() < processos.size()) {
 
-            // Processar esperas
             Iterator<Processo> itEspera = esperando.iterator();
             while (itEspera.hasNext()) {
                 Processo p = itEspera.next();
@@ -27,7 +26,7 @@ public class RoundRobin {
 
             Processo atual = fila.poll();
             if (atual == null) {
-                tempoAtual++; // avanca tempo enquanto espera processo sair do bloqueio
+                tempoAtual++;
                 continue;
             }
 
@@ -64,7 +63,6 @@ public class RoundRobin {
                 }
 
             } else {
-                // Processo inesperadamente em estado errado, talvez acabou de sair da espera
                 fila.add(atual);
                 tempoAtual++;
             }
@@ -84,7 +82,6 @@ public class RoundRobin {
         AtomicInteger tempoAtual = new AtomicInteger(0);
         AtomicInteger cicloAtual = new AtomicInteger(1);
 
-        // Each core will store its time spent in the current cycle
         int[] temposExecutados = new int[numCores];
         Object temposLock = new Object();
 
@@ -98,8 +95,10 @@ public class RoundRobin {
             }
             tempoAtual.addAndGet(maxTempo);
             synchronized (System.out) {
-                System.out.println("Cycle " + cicloAtual.getAndIncrement() + " ended. [All cores finished their turn]");
+                System.out.println("Cycle " + cicloAtual.get() + " ended. [All cores finished their turn]");
+                EscalonadorUtils.logProcessEvent("process_log.csv", "CYCLE", cicloAtual.get(), "CYCLE_END");
             }
+            cicloAtual.incrementAndGet();
         });
 
         for (int coreId = 0; coreId < numCores; coreId++) {
@@ -107,7 +106,7 @@ public class RoundRobin {
             pool.execute(() -> {
                 try {
                     while (finalizados.size() < processos.size()) {
-                        // Processar esperas
+                        // Process waiting
                         synchronized (esperando) {
                             Iterator<Processo> itEspera = esperando.iterator();
                             while (itEspera.hasNext()) {
@@ -116,6 +115,7 @@ public class RoundRobin {
                                     p.setStatus(Status.Pronto);
                                     fila.add(p);
                                     itEspera.remove();
+                                    EscalonadorUtils.logProcessEvent("process_log.csv", p.getNome(), tempoAtual.get(), "WAIT_FINISHED");
                                 }
                             }
                         }
@@ -123,12 +123,13 @@ public class RoundRobin {
                         Processo atual = fila.poll();
                         int tempoExecutado = 0;
                         if (atual == null) {
-                            // No process to run, this core is idle this cycle
+                            // Core idle
                         } else {
                             synchronized (atual) {
                                 if (atual.getStatus() == Status.Pronto) {
                                     atual.setStatus(Status.Executando);
                                     System.out.println("[Core " + finalCoreId + " | " + tempoAtual.get() + "] Executando " + atual.getNome());
+                                    EscalonadorUtils.logProcessEvent("process_log.csv", atual.getNome(), tempoAtual.get(), "STARTED");
 
                                     boolean entrouEmEspera = false;
 
@@ -136,6 +137,8 @@ public class RoundRobin {
                                         if (atual.getTipoEspera() != TipoEspera.Nenhum) {
                                             atual.setStatus(Status.Esperando);
                                             esperando.add(atual);
+                                            System.out.println("[Core " + finalCoreId + " | " + tempoAtual.get() + "] Processo " + atual.getNome() + " está esperando sua operacao de " + atual.getTipoEspera());
+                                            EscalonadorUtils.logProcessEvent("process_log.csv", atual.getNome(), tempoAtual.get() +1, "WAITING_" + atual.getTipoEspera());
                                             entrouEmEspera = true;
                                             break;
                                         }
@@ -148,10 +151,12 @@ public class RoundRobin {
                                             atual.setStatus(Status.Finalizado);
                                             finalizados.add(atual);
                                             System.out.println("[Core " + finalCoreId + " | " + tempoAtual.get() + "] Processo " + atual.getNome() + " finalizado.");
+                                            EscalonadorUtils.logProcessEvent("process_log.csv", atual.getNome(), tempoAtual.get() +1, "FINISHED");
                                         } else {
                                             atual.setStatus(Status.Pronto);
                                             fila.add(atual);
                                             System.out.println("[Core " + finalCoreId + " | " + tempoAtual.get() + "] Processo " + atual.getNome() + " pausado (resta " + atual.getTempoRestante() + ")");
+                                            EscalonadorUtils.logProcessEvent("process_log.csv", atual.getNome(), tempoAtual.get(), "PAUSED");
                                         }
                                     }
                                 } else {
@@ -159,7 +164,6 @@ public class RoundRobin {
                                 }
                             }
                         }
-                        // Store this core's time spent in this cycle
                         synchronized (temposLock) {
                             temposExecutados[finalCoreId] = tempoExecutado;
                         }
@@ -180,6 +184,6 @@ public class RoundRobin {
         }
         pool.shutdown();
         System.out.println("Todos os processos foram executados em Round Robin com cores. Tempo total de execucao: " + tempoAtual.get() + ".");
+        EscalonadorUtils.logProcessEvent("process_log.csv", "todos", tempoAtual.get(), "ALL_FINISHED");
     }
-
 }

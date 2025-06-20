@@ -6,7 +6,6 @@ public class ProcessaEspera {
             return finalizou;
         }
         if (processo.getTipoEspera() == TipoEspera.Processo_Filho) {
-            //TODO
         } else {
             processo.atualizaTempoEspera();
         }
@@ -36,12 +35,9 @@ public class ProcessaEspera {
             return finalizou;
         }
 
-        // Log: process is still waiting
         EscalonadorUtils.logProcessEvent("process_log.csv", processo.getNome(), cicloAtual, "WAITING_" + processo.getTipoEspera() + (coreLabel != null ? ("," + coreLabel) : ""));
 
         if (processo.getTipoEspera() == TipoEspera.Processo_Filho) {
-            // TODO: handle child process waiting
-            // Example: EscalonadorUtils.logProcessEvent("process_log.csv", processo.getNome(), cicloAtual, "WAITING_Processo_Filho" + (coreLabel != null ? ("," + coreLabel) : ""));
         } else {
             processo.atualizaTempoEspera();
         }
@@ -57,7 +53,6 @@ public class ProcessaEspera {
                     EscalonadorUtils.logProcessEvent("process_log.csv", processo.getNome(), cicloAtual, "WAIT_FINISHED_Memoria" + (coreLabel != null ? ("," + coreLabel) : ""));
                     break;
                 case Processo_Filho:
-                    // Log handled above if needed
                     break;
                 default:
                     processo.setStatus(Status.Pronto);

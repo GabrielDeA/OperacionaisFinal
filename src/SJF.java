@@ -9,7 +9,6 @@ public class SJF {
         int totalProcessos = processos.size();
 
         while (finalizados.size() < totalProcessos) {
-            // Move processes to waiting or finalized lists
             Iterator<Processo> it = processos.iterator();
             while (it.hasNext()) {
                 Processo p = it.next();
@@ -22,7 +21,6 @@ public class SJF {
                 }
             }
 
-            // Process waiting queue
             Iterator<Processo> itEspera = esperando.iterator();
             while (itEspera.hasNext()) {
                 Processo p = itEspera.next();
@@ -34,7 +32,6 @@ public class SJF {
                 }
             }
 
-            // Select the next process to execute
             Processo next = processos.stream()
                     .filter(p -> p.getStatus() == Status.Pronto)
                     .min(Comparator.comparingInt(Processo::getTempoRestante))

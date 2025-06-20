@@ -4,9 +4,6 @@ import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static java.lang.Thread.sleep;
 
 public class FIFO {
     public static void executarFIFO(Queue<Processo> processos, int maxCiclos) {
@@ -22,7 +19,6 @@ public class FIFO {
                 EscalonadorUtils.logProcessEvent("process_log.csv", "todos", 0, " os processos finalizaram");
                 return;
             }
-            // escolher o próximo a ser executado
             if (processoAtual == null && !processos.isEmpty()) {
                 switch (processos.peek().getStatus()) {
                     case Pronto:
@@ -106,11 +102,6 @@ public class FIFO {
                         }
                         System.out.println("[Daemon Core] Processo " + daemon.getNome() + " está rodando como daemon no ciclo " + ciclo);
                         EscalonadorUtils.logProcessEvent("process_log.csv", daemon.getNome(), ciclo, "DAEMON_RUNNING");
-                        //try {
-                        //q    sleep(5000);
-                        //} catch (InterruptedException e) {
-                         //   break;
-                        //}
                         ciclo++;
                     }
                 });
@@ -126,11 +117,6 @@ public class FIFO {
                         }
 
                         System.out.println("Cycle " + cicloAtual.incrementAndGet() + " ended. [All cores finished their turn]");
-                        //try {
-                        //    sleep(10000); // Simula o tempo de espera para o próximo ciclo
-                        //} catch (InterruptedException e) {
-                        //    throw new RuntimeException(e);
-                        //}
                     }
                 });
 
